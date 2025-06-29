@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>あなたはどの動物に似ている？</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="header-bar">
+    <h1>あなたはどの動物に似ている？</h1>
+  </div>
+
+  <div class="card">
+    <form method="POST">
+  {% set default_values = {
+    '活動性': 5, '社交性': 5, '好奇心': 5, '睡眠時間': 8,
+    '食へのこだわり': 5, '自立性': 5, '依存傾向': 5, 'ストレス対応力': 5
+  } %}
+
+  {% for label in default_values.keys() %}
+    <label>
+      {{ label }}
+      {% if label == '睡眠時間' %}
+        <input type="range" name="{{ label }}" min="3" max="13"
+               value="{{ input_values.get(label, default_values[label]) }}"
+               oninput="updateValue(this)">
+      {% else %}
+        <input type="range" name="{{ label }}" min="0" max="10"
+               value="{{ input_values.get(label, default_values[label]) }}"
+               oninput="updateValue(this)">
+      {% endif %}
+      <span class="value">{{ input_values.get(label, default_values[label]) }}</span>
+    </label>
+  {% endfor %}
+
+  <button type="submit" class="submit-btn">診断開始</button>
+</form>
+
+
+    {% if result %}
+    <div class="result">
+      あなたは「{{ result }}」タイプです！
+      {% if image_path %}
+      <div><img src="{{ url_for('static', filename=image_path) }}" alt="{{ result }}"></div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function updateValue(slider) {
+      slider.nextElementSibling.textContent = slider.value;
+    }
+    document.querySelectorAll("input[type=range]").forEach(slider => {
+      slider.nextElementSibling.textContent = slider.value;
+    });
+  </script>
+</body>
+</html>

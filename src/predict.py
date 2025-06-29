@@ -1,20 +1,14 @@
 import joblib as jl
 
-def main():
-    # モデルとエンコーダーを読み込む
-    le = jl.load("models/encoder.pkl")
-    model = jl.load("models/best_model.pkl")
+# モデルとエンコーダーはグローバルに一度だけ読み込む
+model = jl.load("models/best_model.pkl")
+le = jl.load("models/encoder.pkl")
 
-    # 予測したいデータを用意する
-    X = [[3, 1, 2, 0, 1, 3, 2, 4]]
-
-    # 予測を実行
-    y = model.predict(X)
+def predict_animal(X):
+    """
+    入力: X = [活動性, 社交性, 好奇心, 睡眠時間, 食べ物へのこだわり, 自立性, 甘えん坊度, ストレス耐性]
+    出力: 動物名（例: "ネコ"）
+    """
+    y = model.predict([X])
     y_real = le.inverse_transform(y)
-
-    # 結果を表示
-    print(f"あなたは「{y_real[0]}」タイプです！")
-
-# スクリプトとして実行されたときのみ main() を呼ぶ
-if __name__ == "__main__":
-    main()
+    return y_real[0]
